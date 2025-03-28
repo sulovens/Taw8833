@@ -1,0 +1,97 @@
+async function clients() {
+    try {
+        const response = await axios.get('https://j-f.cloud/api/wl.php');
+
+        if (response.data.status === 'success') {
+            let suk = `
+                ----------------------------------------
+                |                                      |
+                |   Success! Your IP is registered.    |
+                |                                      |
+                |   You can now use the bot.           |
+                |                                      |
+                ----------------------------------------
+            `;
+            console.log(chalk.green(suk));
+            return true;
+        } else {
+            let tekk = `
+                ----------------------------------------
+                |                                      |
+                |   Error: IP not registered           |
+                |                                      |
+                |   Please register your IP first.     |
+                |                                      |
+                ----------------------------------------
+            `;
+            console.log(chalk.red(tekk));
+            process.exit();
+        }
+    } catch (error) {
+        let teks = `
+            ----------------------------------------
+            |                                      |
+            |   Connection Error                   |
+            |                                      |
+            |   Failed to connect to the server.   |
+            |                                      |
+            ----------------------------------------
+        `;
+        console.log(chalk.red(teks));
+        console.error("Error: ", error);
+        process.exit();
+    }
+}
+
+clients().then(async () => {
+    try {
+        const response = await axios.get('https://j-f.cloud/api/check.php');
+        
+        if (response.data.access === 'granted') {
+            console.log(chalk.green(`
+                ----------------------------------------
+                |                                      |
+                |   Access Granted                    |
+                |                                      |
+                |   Welcome to the system             |
+                |                                      |
+                ----------------------------------------
+            `));
+        } else {
+            console.log(chalk.red(`
+                ----------------------------------------
+                |                                      |
+                |   Access Denied                     |
+                |                                      |
+                |   Invalid credentials               |
+                |                                      |
+                ----------------------------------------
+            `));
+            process.exit(1);
+        }
+    } catch (error) {
+        console.log(chalk.yellow(`
+            ----------------------------------------
+            |                                      |
+            |   Connection Error                   |
+            |                                      |
+            |   Failed to verify access            |
+            |                                      |
+            ----------------------------------------
+        `));
+        console.error("Error: ", error);
+        process.exit(1);
+    }
+}).catch(error => {
+    console.log(chalk.red(`
+        ----------------------------------------
+        |                                      |
+        |   Initialization Failed             |
+        |                                      |
+        |   Could not start the client        |
+        |                                      |
+        ----------------------------------------
+    `));
+    console.error("Error: ", error);
+    process.exit(1);
+});
